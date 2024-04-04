@@ -1,3 +1,3 @@
 -- Add down migration script here
 
-TRUNCATE public."Player";
+TRUNCATE public."Player" CASCADE;

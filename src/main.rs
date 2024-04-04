@@ -1,27 +1,29 @@
-use std::borrow::Borrow;
+use std::collections::btree_map::Range;
 use std::env;
 
 use axum::Extension;
 use axum::{
     routing::get,
-    // http::StatusCode,
-    // Json, 
     Router
 };
-// use serde::{Deserialize, Serialize};
 use axum::response::Html;
 use handlebars::Handlebars;
 use serde_json::json;
-use sqlx::{PgPool, Pool, Postgres};
+use sqlx::PgPool;
 
+mod score_populate;
 
 #[tokio::main]
 async fn main() {
     dotenv::dotenv().unwrap();
     let db = PgPool::connect_lazy(&env::var("DATABASE_URL").expect("Database environment variable missing"))
         .expect("Could not connect to database");
+    for _ in 0..5{
+    score_populate::score_populate(&db).await;
+    }
     let app = Router::new()
         .route("/", get(handler))
+        // .route("/secrettunnel", get(newhandler))
         .layer(Extension(db));
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     
