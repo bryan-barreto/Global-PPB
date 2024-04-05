@@ -1,6 +1,6 @@
 -- Add up migration script here
 
-INSERT INTO public."Player"
+INSERT INTO public.player
 VALUES(
     gen_random_uuid(),
     'Player1',
@@ -10,7 +10,7 @@ VALUES(
     now(),
     'password'
 );
-INSERT INTO public."Player"
+INSERT INTO public.player
 VALUES(
     gen_random_uuid(),
     'Player2',
@@ -20,7 +20,7 @@ VALUES(
     now(),
     'password'
 );
-INSERT INTO public."Player"
+INSERT INTO public.player
 VALUES(
     gen_random_uuid(),
     'Player3',
@@ -30,7 +30,7 @@ VALUES(
     now(),
     'password'
 );
-INSERT INTO public."Player"
+INSERT INTO public.player
 VALUES(
     gen_random_uuid(),
     'Player4',
@@ -40,7 +40,7 @@ VALUES(
     now(),
     'password'
 );
-INSERT INTO public."Player"
+INSERT INTO public.player
 VALUES(
     gen_random_uuid(),
     'Player5',

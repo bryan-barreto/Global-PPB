@@ -1,2 +1,2 @@
 -- Add down migration script here
-DROP TABLE public."Score";
+DROP TABLE public.score;

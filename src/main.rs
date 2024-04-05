@@ -1,4 +1,3 @@
-use std::collections::btree_map::Range;
 use std::env;
 
 use axum::Extension;
@@ -11,6 +10,7 @@ use handlebars::Handlebars;
 use serde_json::json;
 use sqlx::PgPool;
 
+mod prelude;
 mod score_populate;
 
 #[tokio::main]
@@ -24,6 +24,8 @@ async fn main() {
     let app = Router::new()
         .route("/", get(handler))
         // .route("/secrettunnel", get(newhandler))
+        .route("/playerdash", get(player_handler))
+        .route("/businessdash", get(business_handler))
         .layer(Extension(db));
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     
@@ -33,7 +35,7 @@ async fn main() {
 }
 
 async fn handler(db:Extension<PgPool>) -> Html<String> {
-    let player_name = sqlx::query!("SELECT username FROM public.\"Player\"")
+    let player_name = sqlx::query!("SELECT username FROM public.player")
         .fetch_one(&*db)
         .await
         .expect("No Player found")
@@ -43,6 +45,22 @@ async fn handler(db:Extension<PgPool>) -> Html<String> {
     let html_site = include_str!("../index.html");
     let mut reg = Handlebars::new();
     let html_out = reg.render_template(html_site, &json!({"name": player_name})).expect("Idk, error");
+
+    Html(html_out)
+}
+
+async fn player_handler() -> Html<String>{
+    let html_site = include_str!("../index.html");
+    let mut reg = Handlebars::new();
+    let html_out = reg.render(html_site, &json!({})).expect("Error");
+
+    Html(html_out)
+}
+
+async fn business_handler() -> Html<String>{
+    let html_site = include_str!("../index.html");
+    let mut reg = Handlebars::new();
+    let html_out = reg.render(html_site, &json!({})).expect("Error");
 
     Html(html_out)
 }

@@ -1,5 +1,5 @@
 -- Add up migration script here
-CREATE TABLE IF NOT EXISTS public."Player"
+CREATE TABLE IF NOT EXISTS public.player
 (
     player_id uuid NOT NULL,
     username character varying(16) COLLATE pg_catalog."default" NOT NULL,
@@ -8,11 +8,11 @@ CREATE TABLE IF NOT EXISTS public."Player"
     favorite_stage "char",
     account_created date NOT NULL,
     password_hash character varying(80) COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT "Player_pkey" PRIMARY KEY (player_id),
-    CONSTRAINT "Player_username_key" UNIQUE (username)
+    CONSTRAINT player_pkey PRIMARY KEY (player_id),
+    CONSTRAINT player_username_key UNIQUE (username)
 )
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public."Player"
+ALTER TABLE IF EXISTS public.player
     OWNER to postgres;

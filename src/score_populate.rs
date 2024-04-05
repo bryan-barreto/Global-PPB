@@ -1,18 +1,10 @@
 use rand::Rng;
-use sqlx::{types::Uuid, PgPool};
+use sqlx::PgPool;
+
+use crate::prelude::*;
 
 pub async fn score_populate(db:&PgPool){
-    struct Player{
-        player_id : Uuid,
-    }
-    
-    #[repr(i8)]
-    enum StageType{
-        Ruby = 0x52,
-        Sapphire = 0x53
-    }
-
-    let player_list = sqlx::query_as!(Player, "SELECT player_id FROM public.\"Player\"")
+    let player_list = sqlx::query_as!(Player, "SELECT player_id FROM public.player")
         .fetch_all(db)
         .await
         .expect("Error");
@@ -24,7 +16,7 @@ pub async fn score_populate(db:&PgPool){
         let stage = if rng.gen_range(0..2)==0{StageType::Ruby} else{StageType::Sapphire};
 
         let query = sqlx::query!(r#"
-            INSERT INTO public."Score"
+            INSERT INTO public.score
                 VALUES(
                     gen_random_uuid(),
                     $1,
