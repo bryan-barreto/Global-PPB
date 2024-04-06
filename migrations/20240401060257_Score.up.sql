@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS public.score
     player_id uuid NOT NULL,
     score_value integer NOT NULL,
     stage "char" NOT NULL,
-    upload_date date NOT NULL,
+    upload_date timestamp without time zone NOT NULL,
     CONSTRAINT score_pkey PRIMARY KEY (score_id, player_id),
     CONSTRAINT score_player_id_fkey FOREIGN KEY (player_id)
         REFERENCES public.player (player_id) MATCH SIMPLE
