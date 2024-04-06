@@ -50,3 +50,21 @@ VALUES(
     now(),
     'password'
 );
+INSERT INTO public.business
+VALUES(
+    gen_random_uuid(),
+    'business1',
+    'business_email1'
+);
+INSERT INTO public.business
+VALUES(
+    gen_random_uuid(),
+    'business2',
+    'business_email2'
+);
+INSERT INTO public.business
+VALUES(
+    gen_random_uuid(),
+    'business3',
+    'business_email3'
+);

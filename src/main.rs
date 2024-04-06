@@ -18,9 +18,9 @@ async fn main() {
     dotenv::dotenv().unwrap();
     let db = PgPool::connect_lazy(&env::var("DATABASE_URL").expect("Database environment variable missing"))
         .expect("Could not connect to database");
-    for _ in 0..5{
-        score_populate::score_populate(&db, 50).await;
-    }
+    
+    score_populate::score_populate(&db, 250).await;
+    
     let app = Router::new()
         .route("/", get(handler))
         .route("/playerdash", get(player_handler))
