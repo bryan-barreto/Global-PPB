@@ -19,7 +19,7 @@ async fn main() {
     let db = PgPool::connect_lazy(&env::var("DATABASE_URL").expect("Database environment variable missing"))
         .expect("Could not connect to database");
     
-    score_populate::score_populate(&db, 250).await;
+    score_populate::score_populate(&db, 250).await; // Comment out to prevent addition of sample data
     
     let app = Router::new()
         .route("/", get(handler))
@@ -51,7 +51,7 @@ async fn handler(db:Extension<PgPool>) -> Html<String> {
 async fn player_handler() -> Html<String>{
     let html_site = include_str!("../index.html");
     let reg = Handlebars::new();
-    let html_out = reg.render(html_site, &json!({})).expect("Error");
+    let html_out = reg.render_template(html_site, &json!({})).expect("Error");
 
     Html(html_out)
 }
@@ -59,7 +59,8 @@ async fn player_handler() -> Html<String>{
 async fn business_handler() -> Html<String>{
     let html_site = include_str!("../index.html");
     let reg = Handlebars::new();
-    let html_out = reg.render(html_site, &json!({})).expect("Error");
+    let out_string= "Business Intelligence Dashboard".to_string();
+    let html_out = reg.render_template(html_site, &json!({"name": out_string})).expect("Error");
 
     Html(html_out)
 }
