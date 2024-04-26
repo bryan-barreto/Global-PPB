@@ -8,6 +8,7 @@ VALUES(
     NULL,
     'R',
     now(),
+    'USA',
     'password'
 );
 INSERT INTO public.player
@@ -18,6 +19,7 @@ VALUES(
     NULL,
     'R',
     now(),
+    'USA',
     'password'
 );
 INSERT INTO public.player
@@ -28,6 +30,7 @@ VALUES(
     NULL,
     'S',
     now(),
+    'USA',
     'password'
 );
 INSERT INTO public.player
@@ -38,6 +41,7 @@ VALUES(
     NULL,
     'S',
     now(),
+    'USA',
     'password'
 );
 INSERT INTO public.player
@@ -48,6 +52,7 @@ VALUES(
     NULL,
     'S',
     now(),
+    'Japan',
     'password'
 );
 INSERT INTO public.business

@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS public.player
     birth_date date,
     favorite_stage "char",
     account_created date NOT NULL,
+    country character varying(28),
     password_hash character varying(80) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT player_pkey PRIMARY KEY (player_id),
     CONSTRAINT player_username_key UNIQUE (username)

@@ -1,11 +1,12 @@
+import sys
 import matplotlib.pyplot as plt
 from init import init
 from growth import growth
 import numpy as np
+from PIL import Image, ImageDraw, ImageFont 
 
 
-
-def daily_uploads_chart():
+def daily_uploads_chart(out_file = './images/daily_uploads_chart.png'):
     engine, dfs = init()
     dates = dfs['score'][['upload_date','stage']]
     dates_stage_r = dates[dates['stage'] == 'R']
@@ -34,21 +35,56 @@ def daily_uploads_chart():
     plt.xticks(rotation=45)  
 
     plt.tight_layout()  
-    fig.savefig('./images/daily_uploads.png', bbox_inches='tight')
+    fig.savefig(out_file, bbox_inches='tight')
+    print(out_file)
+    print("Daily Uploads")
 
-def average_player_improvement():
+def average_player_improvement(out_file = './images/average_player_improvement.png'):
     engine, dfs = init()
     player_id_list = dfs['player']['player_id'].values
     player_average_list = [growth(player) for player in player_id_list]
-    return np.mean(player_average_list)
     
-def total_players():
+
+    # Create an image object 
+    image = Image.new("RGB", (400, 200), "white") 
+    
+    # Create a drawing object 
+    draw = ImageDraw.Draw(image) 
+    
+    # Choose a font and size 
+    font = ImageFont.truetype("arial.ttf", 72) 
+    percentage = (np.mean(player_average_list)) * 100
+    out_string = f"{percentage:.2f}%"
+    # Draw the text on the image 
+    draw.text((80, 60), out_string, font=font, fill="black") 
+    
+    # Save the image 
+    image.save(out_file) 
+    print(out_file) 
+    print("Average Player Improvements")
+     
+    
+def total_players(out_file = './images/total_players.png'):
     engine, dfs = init()
     total_players = len(dfs['player'])
-    print(total_players)
-    pass
+    image = Image.new("RGB", (400, 200), "white") 
+    
+    # Create a drawing object 
+    draw = ImageDraw.Draw(image) 
+    
+    # Choose a font and size 
+    font = ImageFont.truetype("arial.ttf", 72) 
+    out_string = f"{total_players}"
+    # Draw the text on the image 
+    draw.text((80, 60), out_string, font=font, fill="black") 
+    
+    # Save the image 
+    image.save(out_file) 
+    print(out_file) 
+    print("Total Players")
+    
 
-def favorite_stage_graph():
+def favorite_stage_graph(out_file = './images/favorite_stage_graph.png'):
     engine, dfs = init()
     players_stages = dfs['player'][['favorite_stage']]
     ruby_size = len(players_stages[players_stages['favorite_stage']=='R'])
@@ -59,22 +95,29 @@ def favorite_stage_graph():
     plt.bar(['Ruby', 'Sapphire'],[ruby_size,sapphire_size], color=['tab:red', 'tab:blue'])
     plt.title('Favorite Stages')
     # plt.show()
-    fig.savefig('./images/favorite_stage.png', bbox_inches='tight')
-    pass
+    fig.savefig(out_file, bbox_inches='tight')
+    print(out_file) 
+    print("Favorite Player Stage")
 
-def players_by_country():
+def players_by_country(out_file = './images/players_by_country.png'):
     engine, dfs = init()
     player_countries = dfs['player']['country']
     player_countries_unique = player_countries.unique()
     player_countries = dfs['player'][['country']]
     player_countries_values = [len(player_countries[player_countries['country']==country]) for country in player_countries_unique]
     fig = plt.figure(figsize=(8,6))
-    plt.pie(player_countries_values, labels=player_countries_unique)
-    plt.show()
-    pass
+    plt.pie(player_countries_values, labels=player_countries_unique, autopct='%1.1f%%')
+    # plt.show()
+    fig.savefig(out_file, bbox_inches='tight')
+    print(out_file) 
+    print("Player Countries")
+
+
+if __name__=='__main__':
+    globals()[sys.argv[1]]()
 
 # daily_uploads_chart()
 # average_player_improvement()
 # total_players()
 # favorite_stage_graph()
-players_by_country()
+# players_by_country()

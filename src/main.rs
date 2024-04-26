@@ -1,4 +1,4 @@
-use std::env;
+use std::{env, vec};
 
 use axum::Extension;
 use axum::{
@@ -9,9 +9,13 @@ use axum::response::Html;
 use handlebars::Handlebars;
 use serde_json::json;
 use sqlx::PgPool;
+use std::process::Command;
+use std::str;
 
 mod prelude;
 mod score_populate;
+
+
 
 #[tokio::main]
 async fn main() {
@@ -19,7 +23,8 @@ async fn main() {
     let db = PgPool::connect_lazy(&env::var("DATABASE_URL").expect("Database environment variable missing"))
         .expect("Could not connect to database");
     
-    score_populate::score_populate(&db, 250).await; // Comment out to prevent addition of sample data
+    // score_populate::score_populate(&db, 250).await; // Comment out to prevent addition of sample data
+    
     
     let app = Router::new()
         .route("/", get(handler))
@@ -57,10 +62,31 @@ async fn player_handler() -> Html<String>{
 }
 
 async fn business_handler() -> Html<String>{
+    let chart_list = vec!["daily_uploads_chart", "average_player_improvement", "total_players", "favorite_stage_graph", "players_by_country"];
+
+
     let html_site = include_str!("../index.html");
     let reg = Handlebars::new();
     let out_string= "Business Intelligence Dashboard".to_string();
     let html_out = reg.render_template(html_site, &json!({"name": out_string})).expect("Error");
+    for chart in chart_list{
+        let command =  "./src/graphs.py";
+        let output = Command::new("python")
+            .args([command,chart])
+            .output()
+            .expect("Failed to get {chart}")
+            .stdout
+        ;
+        let out_vector = str::from_utf8(&output)
+            .unwrap()
+            .to_string()
+            .split("")
+        ;
+
+        // println!("{}", out_to_string);
+        // html_out += 
+    }
 
     Html(html_out)
 }
+
