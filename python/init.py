@@ -10,7 +10,7 @@ def init():
     engine = create_engine('postgresql+psycopg2://'+os.getenv("DATABASE_USER"))
 
     tables = ['player','score','business']
-
+    
 
     dfs = {}
     for table in tables:

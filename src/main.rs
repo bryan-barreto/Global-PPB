@@ -1,5 +1,7 @@
+use std::sync::Arc;
 use std::{env, vec};
 
+use appstate::AppState;
 use axum::Extension;
 use axum::{
     routing::get,
@@ -16,6 +18,7 @@ use tower_http::services::ServeDir;
 
 mod prelude;
 mod score_populate;
+mod appstate;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Graph{
@@ -24,11 +27,23 @@ struct Graph{
 }
 
 #[tokio::main]
-
 async fn main() {
-    dotenv::dotenv().unwrap();
-    let db = PgPool::connect_lazy(&env::var("DATABASE_URL").expect("Database environment variable missing"))
+    const SITE_URL:&str = "0.0.0.0:3000";
+
+    dotenv::dotenv().expect(".env does not exist");
+
+    let database_url = env::var("DATABASE_URL")
+        .expect("Database environment variable missing");
+
+    let db = PgPool::connect_lazy(&database_url)
         .expect("Could not connect to database");
+
+    let arc_db = Arc::new(db);
+
+    let mut hb = Handlebars::new();
+    hb.register_template_file("index", "./templates/index.hbs");
+    let arc_hb = Arc::new(hb);
+    let appstate = AppState::new(arc_db, arc_hb);
     
     // score_populate::score_populate(&db, 250).await; // Comment out to prevent addition of sample data
     
@@ -41,36 +56,38 @@ async fn main() {
             "/images",
             ServeDir::new("./images")
         )
-        .layer(Extension(db));
+        .layer(Extension(appstate));
     
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    let listener = tokio::net::TcpListener::bind(SITE_URL).await.unwrap();
     
 
     //Last line in code
     axum::serve(listener, app).await.unwrap();
 }
 
-async fn handler(db:Extension<PgPool>) -> Html<String> {
-    let player_name = sqlx::query!("SELECT username FROM public.player")
-        .fetch_one(&*db)
+async fn handler(appstate:Extension<AppState<'_>>) -> Html<String> {
+    let player_name = sqlx::query!(r#"
+
+SELECT 
+    username 
+FROM 
+    public.player
+
+        "#)
+        .fetch_one(&*appstate.database)
         .await
         .expect("No Player found")
         .username;
 
-    // let html_file = "../index.html";
-    let html_site = include_str!("../index.html");
-    let reg = Handlebars::new();
-    let html_out = reg.render_template(html_site, &json!({"name": player_name})).expect("Idk, error");
+    let html_out = appstate.handlebars.render("index", &json!({"name": player_name})).expect("Idk, error");
 
     Html(html_out)
 }
 
 async fn player_handler() -> Html<String>{
-    let html_site = include_str!("../index.html");
-    let reg = Handlebars::new();
-    let html_out = reg.render_template(html_site, &json!({})).expect("Error");
 
-    Html(html_out)
+
+    Html("Hello World".to_string())
 }
 
 async fn business_handler() -> Html<String>{

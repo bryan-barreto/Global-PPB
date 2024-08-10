@@ -1,9 +1,12 @@
 import sys
 import matplotlib.pyplot as plt
-from init import init
-from growth import growth
+import init
+# from matplotlib import growth
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont 
+import psycopg2
+import os
+from dotenv import load_dotenv
 
 
 def daily_uploads_chart(out_file = './images/daily_uploads_chart.png'):
@@ -39,26 +42,21 @@ def daily_uploads_chart(out_file = './images/daily_uploads_chart.png'):
     print(out_file)
     print("Daily Uploads")
 
-def average_player_improvement(out_file = './images/average_player_improvement.png'):
-    engine, dfs = init()
-    player_id_list = dfs['player']['player_id'].values
-    player_average_list = [growth(player) for player in player_id_list]
+# def average_player_improvement(out_file = './images/average_player_improvement.png'):
+#     engine, dfs = init()
+#     player_id_list = dfs['player']['player_id'].values
+#     player_average_list = [growth(player) for player in player_id_list]
     
 
-    # Create an image object 
     image = Image.new("RGB", (400, 200), "white") 
     
-    # Create a drawing object 
     draw = ImageDraw.Draw(image) 
     
-    # Choose a font and size 
-    font = ImageFont.truetype("arial.ttf", 72) 
-    percentage = (np.mean(player_average_list)) * 100
-    out_string = f"{percentage:.2f}%"
-    # Draw the text on the image 
-    draw.text((80, 60), out_string, font=font, fill="black") 
+    # font = ImageFont.truetype("arial.ttf", 72) 
+    # percentage = (np.mean(player_average_list)) * 100
+    # out_string = f"{percentage:.2f}%"
+    # draw.text((80, 60), out_string, font=font, fill="black") 
     
-    # Save the image 
     image.save(out_file) 
     print(out_file) 
     print("Average Player Improvements")
@@ -69,13 +67,10 @@ def total_players(out_file = './images/total_players.png'):
     total_players = len(dfs['player'])
     image = Image.new("RGB", (400, 200), "white") 
     
-    # Create a drawing object 
     draw = ImageDraw.Draw(image) 
     
-    # Choose a font and size 
     font = ImageFont.truetype("arial.ttf", 72) 
     out_string = f"{total_players}"
-    # Draw the text on the image 
     draw.text((80, 60), out_string, font=font, fill="black") 
     
     # Save the image 
@@ -114,7 +109,11 @@ def players_by_country(out_file = './images/players_by_country.png'):
 
 
 if __name__=='__main__':
-    globals()[sys.argv[1]]()
+    # globals()[sys.argv[1]]()
+    load_dotenv()
+    conn = psycopg2.connect(user=os.getenv("DBUSER"), host=os.getenv("ENDPOINT"), password=os.getenv("PASSWORD"),port=5432)
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM patient_health_history WHERE time >= datetime('now', '-1 minute');")
 
 # daily_uploads_chart()
 # average_player_improvement()

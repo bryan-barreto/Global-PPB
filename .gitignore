@@ -15,9 +15,8 @@ Cargo.lock
 *.pdb
 
 
-# Added by cargo
-
-/target
-
 
 .env
+*.zip
+
+__pycache__
