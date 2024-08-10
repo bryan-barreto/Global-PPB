@@ -41,7 +41,7 @@ async fn main() {
     let arc_db = Arc::new(db);
 
     let mut hb = Handlebars::new();
-    hb.register_template_file("index", "./templates/index.hbs");
+    hb.register_template_file("index", "./templates/index.hbs").expect("index.hbs not found");
     let arc_hb = Arc::new(hb);
     let appstate = AppState::new(arc_db, arc_hb);
     
