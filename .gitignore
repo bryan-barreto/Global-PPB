@@ -20,3 +20,5 @@ venv
 *.zip
 
 __pycache__
+
+db.sqlite3
