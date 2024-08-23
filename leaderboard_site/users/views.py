@@ -1,15 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.template import loader
 
 def login(request):
-    html_page = """
-    <link rel="stylesheet" href="css/cite.css">
-    <html>
-        <div class="login_page">
-            <h2>Login</h2>
-            
-        </div>
-    </html>
-    """
-    return HttpResponse(html_page)
+    html_page = loader.get_template('login.html')
+    return HttpResponse(html_page.render())
     
