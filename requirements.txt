@@ -3,3 +3,5 @@ psycopg2
 python_dotenv
 sqlalchemy
 pandas
+bcrypt
+django

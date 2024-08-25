@@ -79,9 +79,18 @@ WSGI_APPLICATION = 'leaderboard_site.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+    
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+       'ENGINE': 'django.db.backends.postgresql_psycopg2',
+       'NAME': os.getenv("DBNAME"), 
+       'USER': os.getenv("DBUSER"),
+       'PASSWORD': os.getenv("PASSWORD"),
+       'HOST': os.getenv("ENDPOINT"), 
+       'PORT': os.getenv("PORT"),
     }
 }
 
@@ -102,6 +111,11 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+]
+
+# Password Hashers
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
 ]
 
 
