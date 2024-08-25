@@ -1,5 +1,15 @@
 .login_page{
     background-color: aqua;
-    width: 10em;
-    height: 10em;
+    width: 20em;
+    height: 20em;
+    margin:auto;
+    padding-top: 2em;
+}
+
+.login_page > h2{
+    text-align: center;
+}
+
+.login_page > p{
+    text-align: left;
 }
