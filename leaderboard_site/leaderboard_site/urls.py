@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from .views import home
-from users.views import login, register, login_handler
+from users.views import login, register, login_handler, registration_handler
 
 
 urlpatterns = [
@@ -26,4 +26,5 @@ urlpatterns = [
     path('member/', login),
     path('member/register', register),
     path('member/login', login_handler),
+    path('member/confirmation', registration_handler),
 ]
