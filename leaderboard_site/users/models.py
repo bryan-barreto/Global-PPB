@@ -16,4 +16,18 @@ class UserProfile(models.Model):
         return f"{self.uname}"
     
     class Meta:
-        db_table = 'player'
+        db_table = 'players'
+
+
+class Scores(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user_uuid = models.ForeignKey(UserProfile, on_delete=models.CASCADE, db_column='user_uuid')
+    score = models.FloatField(null=False)
+    date = models.DateTimeField(blank=False, default=datetime.now())
+    is_global = models.BooleanField(null=False, default=False, editable=True)
+    
+    def __str__(self) -> str:
+        return f"{self.score}"
+    
+    class Meta:
+        db_table = 'scores'
