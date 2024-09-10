@@ -7,13 +7,24 @@ from django.contrib.auth.hashers import make_password, check_password
 from .models import UserProfile
 
 def login(request):
-    if 'fail' in request.COOKIES:
-        return TemplateResponse(request, 'login.html', {"error":"Invalid username or password"})
-    else:
-        return TemplateResponse(request, 'login.html', {})
+    errors = {}
+    if 'error' in request.COOKIES:
+        errors['error'] = "Invalid username or password"
+    response = TemplateResponse(request, 'login.html', errors)
+    for error in errors:
+        response.delete_cookie(error)
+    return response
 
 def register(request):
-    return TemplateResponse(request, 'register.html', {})
+    errors = {}
+    if 'uerror' in request.COOKIES:
+        errors['uerror'] = "Username already exists"
+    if 'perror' in request.COOKIES:
+        errors['perror'] = "Passwords do not match"
+    response = TemplateResponse(request, 'register.html', errors)
+    for error in errors:
+        response.delete_cookie(error)
+    return response
 
 
 @csrf_protect
@@ -36,11 +47,11 @@ def login_handler(request):
                 return HttpResponse("Home page redirect")
             else:
                 response = HttpResponseRedirect("/member/")
-                response.set_cookie("fail")
+                response.set_cookie("error")
                 return response
         except:
             response = HttpResponseRedirect("/member/")
-            response.set_cookie("fail")
+            response.set_cookie("error")
             return response
             
     return HttpResponse("Unexpected error")
@@ -53,13 +64,22 @@ def registration_handler(request):
         pword = make_password(request.POST.get('password'))
         email = request.POST.get('email')
         
-        if request.POST.get('password') != request.POST.get('reenter'):
-            del request
-            return HttpResponse("Re entered password incorrect")
+        response = HttpResponseRedirect("/member/register")
+    
         
+        try:
+            if len(UserProfile.objects.get(uname=uname)) or len(uname) < 6:
+                response.set_cookie("uerror")
+        except:
+            response.set_cookie("uerror")
+        
+        if request.POST.get('password') != request.POST.get('reenter'):
+            response.set_cookie("perror")
+            
         del request
         
-    
+        if len(response.cookies) > 0:
+            return response
         
         
         UserProfile.objects.create(
@@ -68,5 +88,5 @@ def registration_handler(request):
             email = email
         )
         
-        return HttpResponse("Success")
-    return HttpResponse("Fail")
+        return HttpResponse("Home page redirect")
+    return HttpResponse("Unexpected error")

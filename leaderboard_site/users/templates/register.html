@@ -8,17 +8,17 @@
             {% csrf_token %}
             <label for="username">username:</label><br>
             <input type="text" id="username" name="username"><br>
+            <p>{{uerror}}</p>
 
             <label for="password">password:</label><br>
             <input type="password" id="password" name="password"><br>
 
             <label for="reenter">re-enter password:</label><br>
             <input type="password" id="reenter" name="reenter"><br>
+            <p>{{perror}}</p>
 
             <label for="email">email:</label><br>
             <input type="email" id="email" name="email"><br><br>
-
-            {{error}}
 
             <button type="submit">Register</button>
             <a href=".">Back</a>
