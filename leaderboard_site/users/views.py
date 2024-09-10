@@ -19,10 +19,14 @@ def register(request):
     errors = {}
     if 'uerror' in request.COOKIES:
         errors['uerror'] = "Username already exists"
+    if 'ulerror' in request.COOKIES:
+        errors['uerror'] = "Username must be a minimum of 6 characters"
     if 'perror' in request.COOKIES:
         errors['perror'] = "Passwords do not match"
+    if 'plerror' in request.COOKIES:
+        errors['perror'] = "Password must be a minimum of 8 characters"
     response = TemplateResponse(request, 'register.html', errors)
-    for error in errors:
+    for error in request.COOKIES:
         response.delete_cookie(error)
     return response
 
@@ -68,12 +72,16 @@ def registration_handler(request):
     
         
         try:
-            if len(UserProfile.objects.get(uname=uname)) or len(uname) < 6:
+            if len(uname) < 6:
+                response.set_cookie("ulerror")
+            elif len(UserProfile.objects.get(uname=uname)):
                 response.set_cookie("uerror")
         except:
-            response.set_cookie("uerror")
-        
-        if request.POST.get('password') != request.POST.get('reenter'):
+            pass
+
+        if len(request.POST.get('password')) < 8:
+            response.set_cookie("plerror")
+        elif request.POST.get('password') != request.POST.get('reenter'):
             response.set_cookie("perror")
             
         del request
