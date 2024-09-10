@@ -7,13 +7,14 @@ from django.contrib.auth.hashers import make_password, check_password
 from .models import UserProfile
 
 def login(request):
-    return TemplateResponse(request, 'login.html', {})
-
-def login_fail(request):
-    return TemplateResponse(request, 'login.html', {"error":"Invalid username or password"})
+    if 'fail' in request.COOKIES:
+        return TemplateResponse(request, 'login.html', {"error":"Invalid username or password"})
+    else:
+        return TemplateResponse(request, 'login.html', {})
 
 def register(request):
     return TemplateResponse(request, 'register.html', {})
+
 
 @csrf_protect
 def login_handler(request):
@@ -31,11 +32,16 @@ def login_handler(request):
             del pword
             
             if check:
+                
                 return HttpResponse("Home page redirect")
             else:
-                return HttpResponseRedirect("/member/login_fail") 
+                response = HttpResponseRedirect("/member/")
+                response.set_cookie("fail")
+                return response
         except:
-            return HttpResponseRedirect("/member/login_fail") 
+            response = HttpResponseRedirect("/member/")
+            response.set_cookie("fail")
+            return response
             
     return HttpResponse("Unexpected error")
 
