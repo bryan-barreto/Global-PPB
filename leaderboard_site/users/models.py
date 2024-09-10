@@ -4,7 +4,7 @@ from datetime import datetime
 
 class UserProfile(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    uname = models.CharField(blank=False, max_length=100, editable=False)
+    uname = models.CharField(blank=False, max_length=100, editable=False, unique=True)
     pword_hash = models.CharField(blank=False, max_length=100, editable=True)
     birth_date = models.DateField(blank=True, null=True)
     favorite_stage = models.CharField(blank=True, max_length=1, null=True)

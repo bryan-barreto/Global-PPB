@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseNotAllowed
+from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect
 from django.template import loader
 from django.template.response import TemplateResponse
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
@@ -8,6 +8,9 @@ from .models import UserProfile
 
 def login(request):
     return TemplateResponse(request, 'login.html', {})
+
+def login_fail(request):
+    return TemplateResponse(request, 'login.html', {"error":"Invalid username or password"})
 
 def register(request):
     return TemplateResponse(request, 'register.html', {})
@@ -19,20 +22,23 @@ def login_handler(request):
         pword = request.POST.get('password')
         
         user = None
-        
-        del request
-        
+        request = None
+              
         try:
             user = UserProfile.objects.get(uname=uname)
-            if check_password(pword, user.pword_hash):
-                del pword
-                return HttpResponse("Success")
-            else:
-                return HttpResponse("Incorrect Username or Password") 
-        except:
-            return HttpResponse("Incorrect Username or Password")
+            check = check_password(pword, user.pword_hash)
             
-    return HttpResponse("Fail")
+            del pword
+            
+            if check:
+                return HttpResponse("Home page redirect")
+            else:
+                return HttpResponseRedirect("/member/login_fail") 
+        except:
+            return HttpResponseRedirect("/member/login_fail") 
+            
+    return HttpResponse("Unexpected error")
+
 
 @csrf_protect
 def registration_handler(request):
@@ -41,7 +47,13 @@ def registration_handler(request):
         pword = make_password(request.POST.get('password'))
         email = request.POST.get('email')
         
+        if request.POST.get('password') != request.POST.get('reenter'):
+            del request
+            return HttpResponse("Re entered password incorrect")
+        
         del request
+        
+    
         
         
         UserProfile.objects.create(
