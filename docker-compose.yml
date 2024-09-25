@@ -6,7 +6,24 @@ services:
     #   - .:/django
     ports:
       - 8000:8000
-    image: ppbglobal:django
     container_name: ppbglobal_container
     # command: python manage.py runserver 0.0.0.0:8000
-    command: bash
+    depends_on:
+      - db
+    networks:
+      - internal
+    command: /bin/bash
+  db:
+    image: postgres:latest
+    restart: always
+    shm_size: 128mb
+    environment:
+      - POSTGRES_USER=$DBUSER
+      - POSTGRES_PASSWORD=$PASSWORD
+      - POSTGRES_DB=$DBNAME
+    networks:
+      - internal
+
+networks:
+  internal:
+    internal: true

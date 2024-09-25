@@ -16,6 +16,8 @@ Cargo.lock
 
 venv
 
+important.md
+
 .env
 *.zip
 
